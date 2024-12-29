@@ -12,6 +12,7 @@ export default function Page() {
 
   const [coordinate,setCoordinate]=useState();
   const [weather, setWeather]=useState();
+  const [city, setCity]=useState();
 
   const[isFontLoaded]=useFonts({
     "Alata-Regular":require("../assets/fonts/Alata-Regular.ttf")
@@ -23,13 +24,18 @@ export default function Page() {
 
   useEffect(()=>{
     if(coordinate){
-      fetchWeatherByCoords(coordinate)
+      fetchWeatherByCoords(coordinate);
+      fetcCityByCoords(coordinate);
     }
   },[coordinate]);
   
   async function fetchWeatherByCoords(coords) {
     const weatherResp=await MeteoAPI.fetchWeatherByCoords(coords);
     setWeather(weatherResp)
+  }
+  async function fetcCityByCoords(coords) {
+    const cityResp=await MeteoAPI.fetcCityByCoords(coords);
+    setCity(cityResp);
   }
 
   async function getUserCoordinates(){
@@ -49,7 +55,7 @@ export default function Page() {
     source={backgroundImage}>
   <SafeAreaProvider>
     <SafeAreaView style={s.container}>
-     {isFontLoaded && weather &&<Home weather={weather} />}
+     {isFontLoaded && weather &&<Home city={city} weather={weather} />}
     </SafeAreaView>
   </SafeAreaProvider>
   </ImageBackground>
