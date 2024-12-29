@@ -4,6 +4,7 @@ import {s} from "./Home.style";
 import {Txt} from "../components/TXT/Txt";
 import {MeteoBasic} from "../components/MeteoBasci/MeteoBasic";
 import {getWeatherInterpretation} from "../utils/mete-utils";
+import {MeteoAdvanced} from "../components/MeteoAdvanced/MeteoAdvanced";
 
 export  function Home({weather, city}){
     const currentWeather=weather.current_weather;
@@ -20,7 +21,10 @@ export  function Home({weather, city}){
         <Txt style={s.txt}>Search bar</Txt>
         </View>
     <View style={s.meteo_advanced}>
-        <Txt style={s.txt}>Advanced info</Txt>
+        <MeteoAdvanced 
+        sunrise={weather.daily.sunrise[0].split("T")[1]} 
+        sunset={weather.daily.sunset[0].split("T")[1]} 
+        windspeed={currentWeather.windspeed}/>
         </View>
     </>;
 }
