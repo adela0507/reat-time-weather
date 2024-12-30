@@ -28,3 +28,5 @@ export const WEATHER_INTERPRATIONS = [
 export function getWeatherInterpretation(code){
     return WEATHER_INTERPRATIONS.find((interpretation) => interpretation.codes.includes(code))
 }
+
+export const DAYS=["SUN","MON","TUE","WED","THU","FRI","SAT"];
