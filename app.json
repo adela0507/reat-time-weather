@@ -11,7 +11,8 @@
           "backgroundColor": "#ffffff"
         }
       ],
-      "expo-font"
+      "expo-font",
+      "expo-sqlite"
     ],
     "name": "reat-time-weather",
     "slug": "reat-time-weather",
