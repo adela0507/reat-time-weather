@@ -1,4 +1,4 @@
-import { Alert, ImageBackground, StyleSheet, Text, View } from "react-native";
+import { Alert, ImageBackground, StyleSheet, Text, View,Platform } from "react-native";
 import {s} from "./App.style.js";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import {Home} from "../pages/Home";
@@ -10,6 +10,11 @@ import {MeteoAPI} from "../api/meteo.js"
 import {useFonts} from "expo-font";
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import {NavigationContainer, NavigationIndependentTree} from "@react-navigation/native";
+import * as Notifications from 'expo-notifications';
+import * as Device from 'expo-device';
+import Constants from 'expo-constants';
+
+
 
 const Stack=createNativeStackNavigator();
 
@@ -35,6 +40,13 @@ export default function Page() {
   })
 
   useEffect(()=>{
+    subscribeToNotifications();
+    Notifications.addNotificationResponseReceivedListener((response)=>{
+console.log(response.notification.request.content.data);
+    });
+    Notifications.addNotificationReceivedListener ((notification)=>{
+console.log(notification.request.content.data);
+    });
     getUserCoordinates();
   },[])
 
@@ -44,7 +56,39 @@ export default function Page() {
       fetcCityByCoords(coordinate);
     }
   },[coordinate]);
-  
+
+  async function subscribeToNotifications(){
+    let token;
+if (Platform.OS === 'android') {
+    await Notifications.setNotificationChannelAsync('myNotificationChannel', {
+      name: 'A channel is needed for the permissions prompt to appear',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#FF231F7C',
+    });
+  }
+   if (Device.isDevice) {
+      const { status: existingStatus } =
+        await Notifications.getPermissionsAsync();
+      if (existingStatus !== "granted") {
+        const { status } = await Notifications.requestPermissionsAsync();
+        if (status !== "granted") {
+          alert("Failed to get permissions");
+          return;
+        }
+      }
+      token = (
+        await Notifications.getExpoPushTokenAsync({
+    projectId: Constants.expoConfig?.extra?.eas?.projectId,})
+      ).data;
+      console.log("Token EXPO", token);
+    } else {
+      alert("Must use physical device for Push Notifications");
+    }
+
+    return token;
+  }
+
   async function fetchWeatherByCoords(coords) {
     const weatherResp=await MeteoAPI.fetchWeatherByCoords(coords);
     setWeather(weatherResp)
